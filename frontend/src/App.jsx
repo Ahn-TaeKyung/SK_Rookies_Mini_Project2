@@ -11,6 +11,7 @@ import LoginPage from './pages/LoginPage';
 import MyPage from './pages/MyPage';
 import ProductDetailPage from './pages/ProductDetailPage';
 import ProductRegisterPage from './pages/ProductRegisterPage';
+import EditProductPage from './pages/EditProductPage';
 
 import Header from './components/Header';
 import { Box } from '@mui/material';
@@ -40,9 +41,10 @@ function App() {
           <Route path="/products" element={<ProductsPage />} />
           <Route path="/login" element={<LoginPage />} />
           <Route path="/signup" element={<SignUpPage />} />
-          <Route path="/mypage" element={<MyPage />} />
+          <Route path="/users/profile" element={<MyPage />} />
           <Route path="/products/:product_id" element={<ProductDetailPage />} />
           <Route path="/products/register" element={<ProductRegisterPage />} />
+          <Route path="/products/:product_id/edit" element={<EditProductPage />} />
         </Routes>
       </Box>
     </Box>

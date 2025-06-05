@@ -1,6 +1,6 @@
 import axios from 'axios';
 const BASE_URL = 'http://localhost:8080/api/auth';// 엔드포인트는 실제 백엔드에 맞게 조정
-
+const PRODUCT_URL = 'http://localhost:8080/api/products';
 export const requestSmsCode = (phoneNumber) =>
     axios.post(`${BASE_URL}/send-code`, { phoneNumber });
 
@@ -25,3 +25,18 @@ export const logoutUser = () => {
     console.log("로그아웃 요청 중...");
     axios.post(`${BASE_URL}/logout`);
 }
+
+export const updateProduct = (productId, updatedData, token) =>
+  axios.put(`${PRODUCT_URL}/${productId}`, updatedData, {
+    headers: {
+      Authorization: `Bearer ${token}`,
+    },
+  });
+
+// DELETE: 상품 삭제
+export const deleteProduct = (productId, token) =>
+  axios.delete(`${PRODUCT_URL}/${productId}`, {
+    headers: {
+      Authorization: `Bearer ${token}`,
+    },
+  });

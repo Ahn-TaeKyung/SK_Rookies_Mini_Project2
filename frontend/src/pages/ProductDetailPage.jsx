@@ -9,10 +9,12 @@ import { useSelector } from 'react-redux';
 import ProductsList from '../components/ProductsList';
 import ProductImageSlider from '../components/ProductImageSlider';
 import ProductActions from '../components/ProductActions';
+import { deleteProduct } from '../api/auth';
 
 const ProductDetailPage = () => {
   const { product_id } = useParams();
   const navigate = useNavigate();
+  const token = localStorage.getItem("accessToken");
   const currentUser = useSelector((state) => state.auth.identityInfo); // 로그인한 유저 정보
   const product = products.find((p) => String(p.id) === String(product_id)); // 백엔드 연동 시 삭제
   const [imgIdx, setImgIdx] = useState(0);
@@ -21,7 +23,7 @@ const ProductDetailPage = () => {
 
   useEffect(() => {
     console.log('🔍 currentUser:', currentUser);
-    console.log('🔍 currentUser.user_id:', currentUser?.user_id);
+    console.log('🔍 currentUser.id:', currentUser?.id);
     console.log('🔍 product.seller:', product?.seller);
     console.log('🔍 product.seller.id:', product?.seller?.id);
   }, [currentUser, product]);
@@ -70,7 +72,21 @@ const ProductDetailPage = () => {
     alert('신고 처리가 완료되었습니다.');
   };
 
-  const isOwner = currentUser?.user_id === product.seller?.id;
+  const handleDelete = async () => {
+    const confirm = window.confirm('정말 이 상품을 삭제하시겠습니까?');
+    if (!confirm) return;
+    try {
+      await deleteProduct(product.id, token);
+      alert('상품이 삭제되었습니다.');
+      navigate('/');
+    } catch (err) {
+      console.error('삭제 오류:', err);
+      if (err.response?.status === 403) alert('삭제 권한이 없습니다.');
+      else if (err.response?.status === 404) alert('상품을 찾을 수 없습니다.');
+      else alert('오류가 발생했습니다.');
+    }
+  };
+  const isOwner = currentUser?.id === product.seller?.id;
 
   return (
     <Box sx={{ px: 5, py: 4 }}>
@@ -183,9 +199,23 @@ const ProductDetailPage = () => {
                           cursor: 'pointer',
                           fontWeight: 600,
                         }}
-                        onClick={() => navigate(`/products/edit/${product.id}`)}
+                        onClick={() => navigate(`/products/${product.id}/edit`)}
                       >
                         수정하기
+                      </button>
+                      <button
+                        style={{
+                          padding: '6px 18px',
+                          border: '1px solid #EA002C',
+                          borderRadius: 4,
+                          background: '#fff',
+                          color: '#EA002C',
+                          cursor: 'pointer',
+                          fontWeight: 600,
+                        }}
+                        onClick={handleDelete}
+                      >
+                        삭제하기
                       </button>
                       <button
                         style={{
